@@ -25,19 +25,28 @@ export class DisplayTableComponent implements OnInit {
   }
 
 
-  getPriceForQty(arr: any, qty: any) {
+  getPriceForQty(prices: any, qty: any) {
     // window.alert(arr)
     let resultPrice = 0;
-    for (let i = 0; i < arr.length; i++) {
-        // const currentQty = parseInt(arr[i].qty);
-        const currentQty = arr[i].qty;
-        window.alert(currentQty)
-        if (currentQty >= qty) {
-            resultPrice = arr[i].price;
+    for (let i = 0; i < prices.length; i++) {
+        const currentQty = prices[i].qty;
+        let nextQty = i + 1 < prices.length ? prices[i + 1].qty : 100000000;
+        if (qty >= currentQty && qty < nextQty) {
+            resultPrice = prices[i].price;
             break;
         }
     }
     return resultPrice;
+}
+
+calculatePrice(){
+   console.log(this.products)
+ }
+
+getMinQty(product: any) {
+  let prices = JSON.parse(product.prices)
+  let minQty = prices[0].qty
+  return minQty;
 }
   async addProduct(ref:string){
     let newRef = await getSingleProduct(ref)
@@ -49,15 +58,15 @@ export class DisplayTableComponent implements OnInit {
     this.products =  this.products.filter(item => item.id != id);
     console.log(JSON.stringify(this.products))
   }
-  async ngOnInit() {
-          let index1 = await getProductIndex()
-          this.index = transformChildrenToJson(index1)
+    async ngOnInit() {
+            let index1 = await getProductIndex()
+            this.index = transformChildrenToJson(index1)
 
-          console.log(index1)
-          console.log(this.index)
-          this.products = []
-        ;
-}
+            console.log(index1)
+            console.log(this.index)
+            this.products = []
+          ;
+  }
 }
 
 async function getProductIndex() {
